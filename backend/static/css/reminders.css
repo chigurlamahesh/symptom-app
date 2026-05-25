@@ -1,0 +1,643 @@
+/* ============================================
+   REMINDERS PAGE STYLES
+   AuraHealth AI — Medicine Alarm System
+   ============================================ */
+
+/* Nav bell icon accent */
+.nav-alarm-link i {
+    color: var(--warning);
+    animation: bellShake 4s ease-in-out infinite;
+}
+
+@keyframes bellShake {
+    0%, 85%, 100% { transform: rotate(0deg); }
+    88%  { transform: rotate(12deg); }
+    92%  { transform: rotate(-10deg); }
+    96%  { transform: rotate(8deg); }
+    99%  { transform: rotate(-5deg); }
+}
+
+/* ── LAYOUT ── */
+.reminders-layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 960px) {
+    .reminders-layout { grid-template-columns: 1fr; }
+}
+
+/* ── FORM CARD ── */
+.add-form-card h2 {
+    color: #a5b4fc;
+}
+
+.rem-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--text-light);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.rem-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.rem-input::placeholder { color: var(--text-muted); }
+
+input[type="time"].rem-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* ── DAY PICKER ── */
+.day-picker {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.day-btn {
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.day-btn.active {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #a5b4fc;
+}
+
+.day-btn:hover { border-color: var(--primary); }
+
+.day-quick-btns {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.quick-btn:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: var(--primary);
+    color: #a5b4fc;
+}
+
+/* ── COLOR PICKER ── */
+.color-picker {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    position: relative;
+}
+
+.color-swatch:hover { transform: scale(1.15); }
+
+.color-swatch.active {
+    border-color: white;
+    transform: scale(1.2);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* ── ADD BUTTON ── */
+.add-reminder-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.add-reminder-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);
+}
+
+/* ── NOTIFICATION BANNER ── */
+.notif-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.notif-banner i {
+    font-size: 1.2rem;
+    color: var(--warning);
+    flex-shrink: 0;
+}
+
+.notif-banner strong { color: var(--text-light); }
+
+.notif-banner button {
+    margin-left: auto;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.notif-banner button:hover {
+    background: rgba(245, 158, 11, 0.25);
+}
+
+/* ── REMINDERS LIST PANEL ── */
+.reminders-list-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.list-header h2 {
+    font-size: 1.35rem;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-light);
+    font-weight: 700;
+}
+
+.reminder-count-badge {
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    font-family: 'Outfit', sans-serif;
+}
+
+.reminders-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px dashed var(--glass-border);
+    border-radius: 20px;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+}
+
+/* ── REMINDER CARD ── */
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.reminder-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    backdrop-filter: blur(12px);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
+    animation: slideInUp 0.35s ease forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.reminder-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    background: var(--rem-color, var(--primary));
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.reminder-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.reminder-card.inactive {
+    opacity: 0.45;
+}
+
+.rem-icon-wrap {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.rem-body { flex: 1; min-width: 0; }
+
+.rem-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rem-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.rem-time-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--rem-color, #a5b4fc);
+    background: rgba(99,102,241,0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(99,102,241,0.2);
+}
+
+.rem-dosage-pill {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+}
+
+.rem-days {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.rem-note {
+    font-size: 0.78rem;
+    color: rgba(148, 163, 184, 0.7);
+    margin-top: 0.15rem;
+    font-style: italic;
+}
+
+/* ── CARD ACTIONS ── */
+.rem-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.rem-toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.rem-toggle input { opacity: 0; width: 0; height: 0; }
+
+.rem-toggle-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    transition: background 0.25s;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.rem-toggle input:checked + .rem-toggle-track {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-color: transparent;
+}
+
+.rem-toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 14px; height: 14px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.rem-toggle input:checked ~ .rem-toggle-thumb {
+    transform: translateX(18px);
+}
+
+.rem-delete-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(239,68,68,0.2);
+    background: rgba(239,68,68,0.07);
+    color: rgba(239,68,68,0.7);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.15s;
+}
+
+.rem-delete-btn:hover {
+    background: rgba(239,68,68,0.18);
+    color: #f87171;
+    border-color: rgba(239,68,68,0.4);
+}
+
+/* ── TODAY'S SCHEDULE ── */
+.upcoming-section { margin-top: 0.5rem; }
+
+.today-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.schedule-item {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    transition: transform 0.2s;
+    animation: fadeIn 0.4s ease;
+}
+
+.schedule-item:hover { transform: translateY(-2px); }
+
+.schedule-item.past { opacity: 0.45; }
+
+.schedule-dot {
+    width: 10px; height: 10px; min-width: 10px;
+    border-radius: 50%;
+    background: var(--sc-color, var(--primary));
+    box-shadow: 0 0 8px var(--sc-color, var(--primary));
+}
+
+.schedule-time {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+.schedule-name {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.schedule-status {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--success);
+}
+
+.schedule-item.past .schedule-status { color: var(--text-muted); }
+
+/* ── ALARM OVERLAY ── */
+.alarm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.alarm-modal {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: alarmPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(20px);
+}
+
+@keyframes alarmPop {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+/* Concentric pulsing rings */
+.alarm-icon-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alarm-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(99, 102, 241, 0.5);
+    animation: ringExpand 1.5s ease-out infinite;
+}
+
+.alarm-ring.r1 { width: 100px; height: 100px; animation-delay: 0s; }
+.alarm-ring.r2 { width: 100px; height: 100px; animation-delay: 0.5s; }
+.alarm-ring.r3 { width: 100px; height: 100px; animation-delay: 1s; }
+
+@keyframes ringExpand {
+    0%   { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+.alarm-fire-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 1;
+    animation: iconPop 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes iconPop {
+    from { transform: scale(1); }
+    to   { transform: scale(1.12); }
+}
+
+.alarm-fire-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+.alarm-fire-name {
+    font-size: 1.8rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.alarm-fire-time {
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 0.4rem;
+}
+
+.alarm-fire-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    min-height: 1.2em;
+}
+
+.alarm-fire-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alarm-snooze-btn, .alarm-dismiss-btn {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.alarm-snooze-btn {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-muted);
+}
+
+.alarm-snooze-btn:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--text-light);
+}
+
+.alarm-dismiss-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.alarm-dismiss-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

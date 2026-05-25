@@ -1,0 +1,40 @@
+{
+    "Common Cold": [
+        "Rest and sleep",
+        "Drink plenty of fluids",
+        "Take over-the-counter cold medicines"
+    ],
+    "Influenza": [
+        "Rest",
+        "Stay hydrated",
+        "Take antiviral drugs if prescribed",
+        "Use pain relievers"
+    ],
+    "COVID-19": [
+        "Isolate yourself",
+        "Monitor oxygen levels",
+        "Seek medical attention if breathing difficulties occur",
+        "Wear a mask"
+    ],
+    "Malaria": [
+        "Consult a doctor immediately for antimalarial drugs",
+        "Avoid mosquito bites",
+        "Use mosquito nets"
+    ],
+    "Dengue": [
+        "Drink fluids",
+        "Rest",
+        "Take paracetamol (avoid aspirin/ibuprofen)",
+        "Monitor platelet count"
+    ],
+    "Typhoid": [
+        "Take prescribed antibiotics",
+        "Eat clean and fully cooked food",
+        "Drink purified water"
+    ],
+    "Allergy": [
+        "Identify and avoid allergens",
+        "Take antihistamines",
+        "Consult an allergist"
+    ]
+}

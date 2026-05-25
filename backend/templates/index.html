@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraHealth AI — Symptom Checker</title>
+    <meta name="description" content="AI-powered health symptom checker with voice input and nearest hospital finder.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Leaflet.js Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glass-blob blob-1"></div>
+    <div class="glass-blob blob-2"></div>
+    <div class="glass-blob blob-3"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>AuraHealth AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="active">Checker</a>
+                <a href="/history">History</a>
+                <a href="/reminders" class="nav-alarm-link"><i class="fa-solid fa-bell"></i> Reminders</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="hero">
+            <h1>What's bothering you?</h1>
+            <p>Select or <strong>speak</strong> your symptoms — our advanced AI predicts conditions with confidence scores and finds nearby hospitals.</p>
+        </header>
+
+        <section class="app-interface">
+            <!-- Left Column: Input -->
+            <div class="input-panel glass-card">
+                <h2><i class="fa-solid fa-clipboard-list"></i> Select Symptoms</h2>
+
+                <div class="form-group">
+                    <label for="symptom-select">Choose all that apply:</label>
+                    <select id="symptom-select" class="symptom-select" multiple="multiple" style="width: 100%">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+
+                <!-- Voice Input Section -->
+                <div class="voice-section">
+                    <div class="voice-label">
+                        <i class="fa-solid fa-microphone-lines"></i>
+                        <span>Or speak your symptoms</span>
+                    </div>
+                    <div class="voice-controls">
+                        <button id="voice-btn" class="voice-btn" title="Click to start voice input">
+                            <div class="mic-ring"></div>
+                            <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                        </button>
+                        <div class="voice-status-box">
+                            <p id="voice-status" class="voice-status">Click the mic and speak symptoms clearly</p>
+                            <p id="voice-transcript" class="voice-transcript"></p>
+                        </div>
+                    </div>
+                    <div id="voice-feedback" class="voice-feedback hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span id="voice-feedback-text"></span>
+                    </div>
+                </div>
+
+                <div class="selected-tags" id="selected-tags-container"></div>
+
+                <button id="predict-btn" class="primary-btn pulse-anim">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Symptoms
+                </button>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="results-panel glass-card" id="results-container">
+                <div class="empty-state" id="empty-state">
+                    <div class="icon-pulse">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3>Awaiting Symptoms</h3>
+                    <p>Enter your symptoms on the left to see the AI prediction.</p>
+                </div>
+
+                <div class="results-content hidden" id="results-content">
+                    <div class="prediction-header">
+                        <h2>Prediction Results</h2>
+                        <span class="badge" id="confidence-badge">High Confidence</span>
+                    </div>
+
+                    <div class="disease-card">
+                        <h3 id="predicted-disease">Common Cold</h3>
+                        <div class="confidence-container">
+                            <div class="confidence-labels">
+                                <span>AI Confidence Score</span>
+                                <span id="confidence-percentage">85%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" id="confidence-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="precautions-card">
+                        <h3><i class="fa-solid fa-shield-virus"></i> Recommended Precautions</h3>
+                        <ul id="precautions-list" class="styled-list">
+                            <!-- Precautions injected here -->
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons Row -->
+                    <div class="action-buttons-row">
+                        <button id="find-hospitals-btn" class="hospital-btn">
+                            <i class="fa-solid fa-hospital-user"></i> Find Nearest Hospitals
+                        </button>
+                        <button id="download-pdf-btn" class="pdf-btn">
+                            <i class="fa-solid fa-file-medical"></i> Download PDF Report
+                        </button>
+                    </div>
+
+                    <div class="disclaimer">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p><strong>Disclaimer:</strong> This tool is for informational purposes only and does not replace professional medical advice. Always consult a healthcare provider.</p>
+                    </div>
+                </div>
+
+                <div class="loading-state hidden" id="loading-state">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing your symptoms...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hospital Finder Section (full width) -->
+        <section class="hospital-section hidden" id="hospital-section">
+            <div class="glass-card">
+                <div class="hospital-header">
+                    <h2><i class="fa-solid fa-map-location-dot"></i> Nearest Hospitals</h2>
+                    <span class="hospital-badge" id="hospital-count-badge"></span>
+                </div>
+
+                <!-- Loading state -->
+                <div id="hospital-loading" class="hospital-loading">
+                    <div class="hospital-spinner"></div>
+                    <p>Fetching your location and nearby hospitals...</p>
+                </div>
+
+                <!-- Error state -->
+                <div id="hospital-error" class="hospital-error hidden">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p id="hospital-error-msg">Could not fetch hospitals.</p>
+                </div>
+
+                <!-- Results -->
+                <div id="hospital-results" class="hidden">
+                    <div class="hospital-layout">
+                        <!-- Map -->
+                        <div id="hospital-map" class="hospital-map"></div>
+                        <!-- List -->
+                        <div class="hospital-list" id="hospital-list"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- jsPDF for PDF report generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

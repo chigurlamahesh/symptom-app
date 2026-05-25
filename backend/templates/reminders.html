@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Reminders — AuraHealth AI</title>
+    <meta name="description" content="Set medicine alarms and reminders with AuraHealth AI. Never miss a dose again.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reminders.css') }}">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glass-blob blob-1"></div>
+    <div class="glass-blob blob-2"></div>
+    <div class="glass-blob blob-3"></div>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>AuraHealth AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/">Checker</a>
+                <a href="/history">History</a>
+                <a href="/reminders" class="active nav-alarm-link"><i class="fa-solid fa-bell"></i> Reminders</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ── ALARM FIRING OVERLAY ── -->
+    <div class="alarm-overlay hidden" id="alarm-overlay">
+        <div class="alarm-modal">
+            <div class="alarm-icon-ring">
+                <div class="alarm-ring r1"></div>
+                <div class="alarm-ring r2"></div>
+                <div class="alarm-ring r3"></div>
+                <i class="fa-solid fa-pills alarm-fire-icon"></i>
+            </div>
+            <p class="alarm-fire-label">Medicine Time!</p>
+            <h2 class="alarm-fire-name" id="alarm-fire-name">Paracetamol</h2>
+            <p class="alarm-fire-time" id="alarm-fire-time">08:00 AM</p>
+            <p class="alarm-fire-note" id="alarm-fire-note"></p>
+            <div class="alarm-fire-actions">
+                <button class="alarm-snooze-btn" id="alarm-snooze-btn">
+                    <i class="fa-solid fa-clock"></i> Snooze 10 min
+                </button>
+                <button class="alarm-dismiss-btn" id="alarm-dismiss-btn">
+                    <i class="fa-solid fa-check"></i> Taken — Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <header class="hero">
+            <h1>Medicine Reminders</h1>
+            <p>Set alarms so you never miss a dose. Your reminders are saved locally and will ring right here in the browser.</p>
+        </header>
+
+        <section class="reminders-layout">
+
+            <!-- ── LEFT: ADD REMINDER FORM ── -->
+            <div class="glass-card add-form-card">
+                <h2><i class="fa-solid fa-circle-plus"></i> Add Reminder</h2>
+
+                <div class="form-group">
+                    <label for="med-name">Medicine / Supplement Name</label>
+                    <input type="text" id="med-name" class="rem-input" placeholder="e.g. Paracetamol 500mg" maxlength="60">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="med-time">Alarm Time</label>
+                        <input type="time" id="med-time" class="rem-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="med-dosage">Dosage</label>
+                        <input type="text" id="med-dosage" class="rem-input" placeholder="e.g. 1 tablet" maxlength="30">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Repeat Days</label>
+                    <div class="day-picker" id="day-picker">
+                        <button class="day-btn active" data-day="Mon">Mon</button>
+                        <button class="day-btn active" data-day="Tue">Tue</button>
+                        <button class="day-btn active" data-day="Wed">Wed</button>
+                        <button class="day-btn active" data-day="Thu">Thu</button>
+                        <button class="day-btn active" data-day="Fri">Fri</button>
+                        <button class="day-btn active" data-day="Sat">Sat</button>
+                        <button class="day-btn active" data-day="Sun">Sun</button>
+                    </div>
+                    <div class="day-quick-btns">
+                        <button class="quick-btn" id="quick-everyday">Every Day</button>
+                        <button class="quick-btn" id="quick-weekday">Weekdays</button>
+                        <button class="quick-btn" id="quick-weekend">Weekends</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="med-color">Label Color</label>
+                    <div class="color-picker" id="color-picker">
+                        <button class="color-swatch active" data-color="#6366f1" style="background:#6366f1" title="Indigo"></button>
+                        <button class="color-swatch" data-color="#ec4899" style="background:#ec4899" title="Pink"></button>
+                        <button class="color-swatch" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+                        <button class="color-swatch" data-color="#22c55e" style="background:#22c55e" title="Green"></button>
+                        <button class="color-swatch" data-color="#f59e0b" style="background:#f59e0b" title="Amber"></button>
+                        <button class="color-swatch" data-color="#ef4444" style="background:#ef4444" title="Red"></button>
+                        <button class="color-swatch" data-color="#a855f7" style="background:#a855f7" title="Purple"></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="med-note">Notes (optional)</label>
+                    <input type="text" id="med-note" class="rem-input" placeholder="e.g. Take after food, with water" maxlength="100">
+                </div>
+
+                <button class="add-reminder-btn" id="add-reminder-btn">
+                    <i class="fa-solid fa-bell-plus"></i> Set Reminder
+                </button>
+
+                <!-- Notification permission banner -->
+                <div class="notif-banner" id="notif-banner" style="display:none">
+                    <i class="fa-solid fa-bell-slash"></i>
+                    <div>
+                        <strong>Enable notifications</strong> for alarms to work even when this tab is in the background.
+                    </div>
+                    <button id="notif-allow-btn">Allow</button>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: ACTIVE REMINDERS ── -->
+            <div class="reminders-list-panel">
+                <div class="list-header">
+                    <h2><i class="fa-solid fa-list-check"></i> Active Reminders</h2>
+                    <span class="reminder-count-badge" id="reminder-count-badge">0</span>
+                </div>
+
+                <div class="reminders-empty hidden" id="reminders-empty">
+                    <div class="empty-icon"><i class="fa-regular fa-bell-slash"></i></div>
+                    <p>No reminders yet. Add one to get started!</p>
+                </div>
+
+                <div id="reminders-list" class="reminders-list">
+                    <!-- Reminder cards injected here -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ── UPCOMING ALARMS TODAY ── -->
+        <section class="upcoming-section" id="upcoming-section">
+            <div class="glass-card">
+                <h2 style="color:var(--warning)"><i class="fa-solid fa-clock"></i> Today's Schedule</h2>
+                <div id="today-schedule" class="today-schedule">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/reminders.js') }}"></script>
+</body>
+</html>

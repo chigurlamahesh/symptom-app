@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction History - AuraHealth AI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glass-blob blob-1"></div>
+    <div class="glass-blob blob-2" style="top: 10%; right: 20%; background: radial-gradient(circle, rgba(168,85,247,0.4) 0%, rgba(168,85,247,0) 70%);"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>AuraHealth AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/">Checker</a>
+                <a href="/history" class="active">History</a>
+                <a href="/reminders" class="nav-alarm-link"><i class="fa-solid fa-bell"></i> Reminders</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="hero">
+            <h1>Prediction History</h1>
+            <p>Review your past symptom checks and AI predictions.</p>
+        </header>
+
+        <section class="history-container glass-card" style="max-width: 1000px; margin: 0 auto;">
+            <div id="history-loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading history...</p>
+            </div>
+            
+            <div id="history-empty" class="empty-state hidden">
+                <div class="icon-pulse" style="animation: none;">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <h3>No History Found</h3>
+                <p>You haven't made any predictions yet. Head over to the <a href="/" style="color: var(--primary);">Checker</a> to get started.</p>
+            </div>
+
+            <div class="table-responsive hidden" id="history-content">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Symptoms</th>
+                            <th>Predicted Disease</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Specific script for history page
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchHistory();
+        });
+    </script>
+</body>
+</html>
