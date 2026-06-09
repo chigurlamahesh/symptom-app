@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../models/reminder.dart';
 import '../providers/health_provider.dart';
 import '../utils/app_theme.dart';
+import '../widgets/animated_button.dart';
 
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
@@ -46,15 +47,17 @@ class _RemindersScreenState extends State<RemindersScreen> {
         ),
       ),
       body: _buildBody(state, reminders),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddReminderSheet(context),
-        backgroundColor: AppTheme.accent,
-        icon: const Icon(Icons.add_alarm_rounded, color: Colors.white),
-        label: Text(
-          'Add Reminder',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+      floatingActionButton: AnimatedButton(
+        child: FloatingActionButton.extended(
+          onPressed: () => _showAddReminderSheet(context),
+          backgroundColor: AppTheme.accent,
+          icon: const Icon(Icons.add_alarm_rounded, color: Colors.white),
+          label: Text(
+            'Add Reminder',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ),
       ).animate().scale(delay: 200.ms, duration: 400.ms, curve: Curves.easeOutBack),
@@ -86,9 +89,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 style: GoogleFonts.poppins(color: AppTheme.textSecondary),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.read<HealthProvider>().loadReminders(),
-                child: const Text('Retry'),
+              AnimatedButton(
+                child: ElevatedButton(
+                  onPressed: () => context.read<HealthProvider>().loadReminders(),
+                  child: const Text('Retry'),
+                ),
               ),
             ],
           ),
@@ -200,14 +205,18 @@ class _ReminderCard extends StatelessWidget {
             title: Text('Delete Reminder', style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
             content: Text('Are you sure you want to remove the reminder for ${reminder.medicineName}?', style: GoogleFonts.poppins()),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text('Cancel', style: GoogleFonts.poppins(color: AppTheme.textSecondary)),
+              AnimatedButton(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('Cancel', style: GoogleFonts.poppins(color: AppTheme.textSecondary)),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text('Delete', style: GoogleFonts.poppins(color: Colors.white)),
+              AnimatedButton(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: Text('Delete', style: GoogleFonts.poppins(color: Colors.white)),
+                ),
               ),
             ],
           ),
@@ -644,23 +653,26 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
               SizedBox(
                 width: double.infinity,
                 height: 48,
-                child: ElevatedButton(
-                  onPressed: _isSaving ? null : _saveReminder,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: AnimatedButton(
+                  enabled: !_isSaving,
+                  child: ElevatedButton(
+                    onPressed: _isSaving ? null : _saveReminder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.accent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: _isSaving
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          )
+                        : Text(
+                            'Save Reminder',
+                            style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 15),
+                          ),
                   ),
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : Text(
-                          'Save Reminder',
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 15),
-                        ),
                 ),
               ),
             ],

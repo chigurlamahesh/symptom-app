@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Internet permission for calling Flask API -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Required for Voice-Based Symptom Input -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:label="AI Health Checker"
         android:name="${applicationName}"
@@ -43,6 +45,9 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
         </intent>
     </queries>
 </manifest>

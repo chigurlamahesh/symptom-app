@@ -20,6 +20,17 @@ class Prediction {
   final List<TopPrediction> topPredictions;
   final DateTime timestamp;
   final int? id;
+  
+  // Patient clinical intake fields
+  final int? age;
+  final String? sex;
+  final String? smoker;
+  final double? weight;
+  final double? height;
+  final List<String> existingConditions;
+  final String? duration;
+  final String? severity;
+  final String? recommendation;
 
   Prediction({
     required this.disease,
@@ -29,6 +40,15 @@ class Prediction {
     required this.topPredictions,
     required this.timestamp,
     this.id,
+    this.age,
+    this.sex,
+    this.smoker,
+    this.weight,
+    this.height,
+    this.existingConditions = const [],
+    this.duration,
+    this.severity,
+    this.recommendation,
   });
 
   factory Prediction.fromApiResponse(Map<String, dynamic> json, List<String> selectedSymptoms) {
@@ -43,6 +63,15 @@ class Prediction {
               .toList() ??
           [],
       timestamp: DateTime.now(),
+      age: json['age'] as int?,
+      sex: json['sex'] as String?,
+      smoker: json['smoker'] as String?,
+      weight: (json['weight'] as num?)?.toDouble(),
+      height: (json['height'] as num?)?.toDouble(),
+      existingConditions: List<String>.from(json['existing_conditions'] as List? ?? []),
+      duration: json['duration'] as String?,
+      severity: json['severity'] as String?,
+      recommendation: json['recommendation'] as String?,
     );
   }
 
@@ -51,10 +80,19 @@ class Prediction {
       id: json['id'] as int?,
       disease: json['predicted_disease'] as String,
       confidence: (json['confidence'] as num).toDouble(),
-      precautions: List<String>.from(json['precautions'] as List),
-      symptoms: List<String>.from(json['symptoms'] as List),
+      precautions: List<String>.from(json['precautions'] as List? ?? []),
+      symptoms: List<String>.from(json['symptoms'] as List? ?? []),
       topPredictions: [],
       timestamp: DateTime.tryParse(json['timestamp'] as String? ?? '') ?? DateTime.now(),
+      age: json['age'] as int?,
+      sex: json['sex'] as String?,
+      smoker: json['smoker'] as String?,
+      weight: (json['weight'] as num?)?.toDouble(),
+      height: (json['height'] as num?)?.toDouble(),
+      existingConditions: List<String>.from(json['existing_conditions'] as List? ?? []),
+      duration: json['duration'] as String?,
+      severity: json['severity'] as String?,
+      recommendation: json['recommendation'] as String?,
     );
   }
 

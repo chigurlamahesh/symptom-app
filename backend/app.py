@@ -54,11 +54,21 @@ def predict():
     if not model:
         return jsonify({'error': 'Model not loaded. Train the model first.'}), 500
 
-    data = request.json
+    data = request.json or {}
     selected_symptoms = data.get('symptoms', [])
 
     if not selected_symptoms:
         return jsonify({'error': 'No symptoms provided.'}), 400
+
+    # Parse patient details with sensible defaults
+    age = int(data.get('age', 30))
+    sex = data.get('sex', 'Male')
+    smoker = data.get('smoker', 'No')
+    weight = float(data.get('weight', 70.0))
+    height = float(data.get('height', 170.0))
+    existing_conditions = data.get('existing_conditions', [])
+    duration = data.get('duration', '1-3 days')
+    severity = data.get('severity', 'Moderate')
 
     # Create a feature vector initialized with zeros
     input_vector = {feature: 0 for feature in feature_names}
@@ -71,26 +81,214 @@ def predict():
     # Convert to DataFrame to match training data
     input_df = pd.DataFrame([input_vector])
     
-    # Predict probabilities
+    # Predict base probabilities
+    # Predict base probabilities
     probabilities = model.predict_proba(input_df)[0]
     classes = model.classes_
     
-    # Get top 3 predictions
-    top_indices = probabilities.argsort()[::-1][:3]
+    # Calculate BMI
+    bmi = 22.0
+    if height > 0:
+        bmi = weight / ((height / 100) ** 2)
+    
+    # Map probability to dictionary for adjustment with a small smoothing epsilon
+    epsilon = 0.05
+    prob_dict = {classes[i]: float(probabilities[i]) + epsilon for i in range(len(classes))}
+    
+    # Define clinical risk factor modifiers based on patient details
+    for disease in prob_dict:
+        multiplier = 1.0
+        
+        # 1. Common Cold scaling (more common in children, rare in elderly, low duration/severity)
+        if disease == 'Common Cold':
+            if age < 12:
+                multiplier *= 1.3
+            elif age >= 60:
+                multiplier *= 0.8
+            if duration in ['1-2 weeks', 'More than 2 weeks']:
+                multiplier *= 0.3
+            if severity == 'Severe':
+                multiplier *= 0.4
+                
+        # 2. Influenza scaling (high risk for elderly, infants, and pregnant females)
+        elif disease == 'Influenza':
+            if age >= 65 or age < 5:
+                multiplier *= 1.5
+            if severity == 'Severe':
+                multiplier *= 1.3
+            # Childbearing age females have higher complication risks
+            if sex == 'Female' and age >= 18 and age <= 45:
+                multiplier *= 1.2
+                
+        # 3. COVID-19 scaling (high risk for elderly, smokers, and obese)
+        elif disease == 'COVID-19':
+            if age >= 60:
+                multiplier *= 1.5
+            elif age < 18:
+                multiplier *= 0.6
+            if smoker == 'Yes':
+                multiplier *= 1.3
+            if bmi >= 30:
+                multiplier *= 1.3
+                
+        # 4. Malaria scaling (high risk for children under 5 and pregnant females)
+        elif disease == 'Malaria':
+            if age < 5:
+                multiplier *= 1.4
+            if sex == 'Female' and age >= 18 and age <= 40:
+                multiplier *= 1.2
+                
+        # 5. Dengue scaling (more common/severe in younger adults)
+        elif disease == 'Dengue':
+            if age < 25:
+                multiplier *= 1.3
+            elif age >= 60:
+                multiplier *= 0.8
+                
+        # 6. Typhoid scaling (high risk for children/young adults)
+        elif disease == 'Typhoid':
+            if age < 20:
+                multiplier *= 1.4
+            elif age >= 60:
+                multiplier *= 0.7
+                
+        # 7. Allergy scaling (triggered/aggravated by history and high duration)
+        elif disease == 'Allergy':
+            if any(c.lower() in ['allergies', 'asthma'] for c in existing_conditions):
+                multiplier *= 2.0
+            if duration in ['1-2 weeks', 'More than 2 weeks']:
+                multiplier *= 1.5
+            if severity == 'Severe':
+                multiplier *= 0.6
+                
+        # 8. Bronchitis scaling (extremely smoking and age dependent)
+        elif disease == 'Bronchitis':
+            if smoker == 'Yes':
+                multiplier *= 2.0
+            if age >= 50:
+                multiplier *= 1.4
+            elif age < 25:
+                multiplier *= 0.6
+            if any(c.lower() in ['asthma', 'copd', 'diabetes'] for c in existing_conditions):
+                multiplier *= 1.3
+            if severity == 'Severe':
+                multiplier *= 1.3
+            if duration in ['4-7 days', '1-2 weeks', 'More than 2 weeks']:
+                multiplier *= 1.2
+                
+        # 9. Pneumonia scaling (high risk for elderly, smokers, asthma/COPD history)
+        elif disease == 'Pneumonia':
+            if age >= 65:
+                multiplier *= 1.8
+            elif age < 5:
+                multiplier *= 1.4
+            elif age < 30:
+                multiplier *= 0.8
+            if smoker == 'Yes':
+                multiplier *= 1.6
+            if any(c.lower() in ['asthma', 'copd', 'diabetes'] for c in existing_conditions):
+                multiplier *= 1.3
+            if severity == 'Severe':
+                multiplier *= 1.3
+            if duration in ['4-7 days', '1-2 weeks', 'More than 2 weeks']:
+                multiplier *= 1.2
+                
+        # 10. Heart Attack / Angina scaling (highly age, gender, smoker, and obesity dependent)
+        elif disease == 'Heart Attack / Angina':
+            if age >= 55:
+                multiplier *= 2.5
+            elif age >= 40:
+                multiplier *= 1.5
+            elif age < 30:
+                multiplier *= 0.05
+            
+            if smoker == 'Yes':
+                multiplier *= 1.8
+            if any(c.lower() in ['hypertension', 'diabetes', 'heart disease'] for c in existing_conditions):
+                multiplier *= 1.6
+            if severity == 'Severe':
+                multiplier *= 1.5
+                
+            # Gender modifiers
+            if sex == 'Male':
+                multiplier *= 1.4
+            elif sex == 'Female':
+                if age < 50:
+                    multiplier *= 0.7
+                else:
+                    multiplier *= 1.1
+            
+            # Obesity/BMI modifiers
+            if bmi >= 30:
+                multiplier *= 1.6
+            elif bmi >= 25:
+                multiplier *= 1.2
+                
+        # 11. GERD scaling (highly obesity and age dependent)
+        elif disease == 'GERD':
+            if age >= 40:
+                multiplier *= 1.3
+            if duration in ['1-2 weeks', 'More than 2 weeks']:
+                multiplier *= 1.3
+            if severity == 'Severe':
+                multiplier *= 0.7
+            if bmi >= 25:
+                multiplier *= 1.5
+                
+        # 12. Asthma Exacerbation scaling (strongly medical history dependent)
+        elif disease == 'Asthma Exacerbation':
+            if any('asthma' in c.lower() for c in existing_conditions):
+                multiplier *= 3.0
+            else:
+                multiplier *= 0.1
+            if smoker == 'Yes':
+                multiplier *= 1.4
+                
+        prob_dict[disease] *= multiplier
+        
+    # Re-normalize modified probabilities so they sum to 1.0
+    total_score = sum(prob_dict.values())
+    if total_score > 0:
+        for disease in prob_dict:
+            prob_dict[disease] = prob_dict[disease] / total_score
+    else:
+        # Fallback to standard ML probability if all factors are zero
+        prob_dict = {classes[i]: float(probabilities[i]) for i in range(len(classes))}
+        
+    # Get top 3 predictions from the personalized distribution
+    sorted_predictions = sorted(prob_dict.items(), key=lambda item: item[1], reverse=True)
+    
     top_predictions = [
         {
-            'disease': classes[i],
-            'confidence': round(float(probabilities[i]) * 100, 2)
+            'disease': d,
+            'confidence': round(float(conf) * 100, 2)
         }
-        for i in top_indices if probabilities[i] > 0
+        for d, conf in sorted_predictions[:3] if conf > 0
     ]
     
     # Primary prediction
-    predicted_disease = classes[top_indices[0]]
-    confidence = round(float(probabilities[top_indices[0]]) * 100, 2)
+    predicted_disease = top_predictions[0]['disease']
+    confidence = top_predictions[0]['confidence']
     
     # Get precautions
     precautions = precautions_dict.get(predicted_disease, ["Consult a doctor for further advice."])
+    
+    # Dynamic specialist recommendations
+    recommendation_map = {
+        'Pneumonia': 'Consult a Pulmonologist.',
+        'Bronchitis': 'Consult a Pulmonologist.',
+        'Asthma Exacerbation': 'Consult a Pulmonologist or Allergist.',
+        'Heart Attack / Angina': 'Consult a Cardiologist immediately (EMERGENCY: Call 911 if experiencing chest pain and shortness of breath!).',
+        'GERD': 'Consult a Gastroenterologist.',
+        'Allergy': 'Consult an Allergist.',
+        'Common Cold': 'Consult a General Physician.',
+        'Influenza': 'Consult a General Physician.',
+        'Malaria': 'Consult an Infectious Disease Specialist.',
+        'Dengue': 'Consult an Infectious Disease Specialist.',
+        'Typhoid': 'Consult an Infectious Disease Specialist or General Physician.',
+        'COVID-19': 'Consult a General Physician (Isolate and monitor oxygen levels).'
+    }
+    recommendation = recommendation_map.get(predicted_disease, 'Consult a General Physician.')
     
     # Save to history
     inserted_id = None
@@ -98,9 +296,26 @@ def predict():
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         cursor.execute('''
-        INSERT INTO predictions (symptoms, predicted_disease, confidence, precautions)
-        VALUES (?, ?, ?, ?)
-        ''', (json.dumps(selected_symptoms), predicted_disease, confidence, json.dumps(precautions)))
+        INSERT INTO predictions (
+            symptoms, predicted_disease, confidence, precautions,
+            age, sex, smoker, weight, height, existing_conditions, duration, severity, recommendation
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            json.dumps(selected_symptoms),
+            predicted_disease,
+            confidence,
+            json.dumps(precautions),
+            age,
+            sex,
+            smoker,
+            weight,
+            height,
+            json.dumps(existing_conditions),
+            duration,
+            severity,
+            recommendation
+        ))
         inserted_id = cursor.lastrowid
         conn.commit()
         conn.close()
@@ -112,7 +327,16 @@ def predict():
         'disease': predicted_disease,
         'confidence': confidence,
         'precautions': precautions,
-        'top_predictions': top_predictions
+        'top_predictions': top_predictions,
+        'age': age,
+        'sex': sex,
+        'smoker': smoker,
+        'weight': weight,
+        'height': height,
+        'existing_conditions': existing_conditions,
+        'duration': duration,
+        'severity': severity,
+        'recommendation': recommendation
     })
 
 @app.route('/api/history', methods=['GET'])
@@ -133,7 +357,16 @@ def get_history():
                 'symptoms': json.loads(row['symptoms']),
                 'predicted_disease': row['predicted_disease'],
                 'confidence': row['confidence'],
-                'precautions': json.loads(row['precautions'])
+                'precautions': json.loads(row['precautions']),
+                'age': row['age'] if 'age' in row.keys() else None,
+                'sex': row['sex'] if 'sex' in row.keys() else None,
+                'smoker': row['smoker'] if 'smoker' in row.keys() else None,
+                'weight': row['weight'] if 'weight' in row.keys() else None,
+                'height': row['height'] if 'height' in row.keys() else None,
+                'existing_conditions': json.loads(row['existing_conditions']) if 'existing_conditions' in row.keys() and row['existing_conditions'] else [],
+                'duration': row['duration'] if 'duration' in row.keys() else None,
+                'severity': row['severity'] if 'severity' in row.keys() else None,
+                'recommendation': row['recommendation'] if 'recommendation' in row.keys() else None
             })
             
         return jsonify(history_list)
@@ -168,7 +401,6 @@ def generate_medical_report_pdf(record):
     styles = getSampleStyleSheet()
     
     # Custom styles
-    # Primary: Deep Teal (#0E627A), Secondary: Charcoal (#2C3E50), Accent: Coral/Amber (#E67E22), Light BG: (#F8F9FA)
     primary_color = colors.HexColor('#0E627A')
     secondary_color = colors.HexColor('#2C3E50')
     accent_color = colors.HexColor('#E67E22')
@@ -273,19 +505,68 @@ def generate_medical_report_pdf(record):
     story.append(meta_table)
     story.append(Spacer(1, 15))
     
-    # 3. Symptoms Analyzed
-    story.append(Paragraph("1. Symptoms Analyzed", section_heading))
-    symptoms = json.loads(record['symptoms'])
+    # 3. Patient Clinical Profile
+    story.append(Paragraph("1. Patient Clinical Profile", section_heading))
+    age_val = record.get('age')
+    sex_val = record.get('sex') or 'N/A'
+    smoker_val = record.get('smoker') or 'N/A'
+    weight_val = record.get('weight')
+    height_val = record.get('height')
+    duration_val = record.get('duration') or 'N/A'
+    severity_val = record.get('severity') or 'N/A'
+    
+    conditions_raw = record.get('existing_conditions') or '[]'
+    try:
+        conditions_list = json.loads(conditions_raw) if isinstance(conditions_raw, str) else conditions_raw
+        formatted_conditions = ", ".join([c.title() for c in conditions_list]) if conditions_list else 'None Reported'
+    except Exception:
+        formatted_conditions = 'None Reported'
+        
+    profile_data = [
+        [
+            Paragraph("<b>Age:</b> {}".format(age_val if age_val else 'N/A'), body_style),
+            Paragraph("<b>Gender:</b> {}".format(sex_val), body_style)
+        ],
+        [
+            Paragraph("<b>Weight:</b> {} kg".format(weight_val if weight_val else 'N/A'), body_style),
+            Paragraph("<b>Height:</b> {} cm".format(height_val if height_val else 'N/A'), body_style)
+        ],
+        [
+            Paragraph("<b>Smoking Status:</b> {}".format(smoker_val), body_style),
+            Paragraph("<b>Medical History:</b> {}".format(formatted_conditions), body_style)
+        ],
+        [
+            Paragraph("<b>Symptom Duration:</b> {}".format(duration_val), body_style),
+            Paragraph("<b>Symptom Severity:</b> {}".format(severity_val), body_style)
+        ]
+    ]
+    
+    profile_table = Table(profile_data, colWidths=[doc.width/2.0, doc.width/2.0])
+    profile_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor('#E2E8F0')),
+        ('PADDING', (0, 0), (-1, -1), 8),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    story.append(profile_table)
+    story.append(Spacer(1, 15))
+    
+    # 4. Symptoms Analyzed
+    story.append(Paragraph("2. Symptoms Analyzed", section_heading))
+    symptoms = json.loads(record['symptoms']) if isinstance(record['symptoms'], str) else record['symptoms']
     formatted_symptoms = [s.replace('_', ' ').title() for s in symptoms]
     symptoms_text = ", ".join(formatted_symptoms)
     story.append(Paragraph(symptoms_text, body_style))
     story.append(Spacer(1, 15))
     
-    # 4. Assessment Prediction Results
-    story.append(Paragraph("2. Assessment Result", section_heading))
+    # 5. Assessment Prediction Results
+    story.append(Paragraph("3. Assessment Result", section_heading))
     
     disease = record['predicted_disease']
     confidence = float(record['confidence'])
+    recommendation = record.get('recommendation') or "Consult a General Physician."
     
     if confidence >= 80:
         conf_color = colors.HexColor('#27AE60')
@@ -305,6 +586,10 @@ def generate_medical_report_pdf(record):
         [
             Paragraph("<b>AI Confidence Score:</b>", body_style),
             Paragraph("<font color='{}'><b>{}% ({})</b></font>".format(conf_color.hexval(), confidence, conf_label), bold_body_style)
+        ],
+        [
+            Paragraph("<b>Specialist Recommendation:</b>", body_style),
+            Paragraph("<font color='{}'><b>{}</b></font>".format(accent_color.hexval(), recommendation), bold_body_style)
         ]
     ]
     
@@ -320,9 +605,9 @@ def generate_medical_report_pdf(record):
     story.append(result_table)
     story.append(Spacer(1, 15))
     
-    # 5. Recommended Precautions
-    story.append(Paragraph("3. Recommended Precautions", section_heading))
-    precautions = json.loads(record['precautions'])
+    # 6. Recommended Precautions
+    story.append(Paragraph("4. Recommended Precautions", section_heading))
+    precautions = json.loads(record['precautions']) if isinstance(record['precautions'], str) else record['precautions']
     
     precaution_list = []
     for idx, prec in enumerate(precautions, 1):
@@ -340,12 +625,12 @@ def generate_medical_report_pdf(record):
     story.append(prec_table)
     story.append(Spacer(1, 20))
     
-    # 6. Disclaimer (Keep together at bottom)
+    # 7. Disclaimer (Keep together at bottom)
     disclaimer_box = []
     disclaimer_box.append(Paragraph("<b>IMPORTANT MEDICAL DISCLAIMER:</b>", ParagraphStyle('DisclaimerTitle', parent=disclaimer_style, fontName='Helvetica-Bold', textColor=accent_color)))
     disclaimer_box.append(Spacer(1, 3))
     disclaimer_box.append(Paragraph(
-        "This report is generated by an Artificial Intelligence (AI) model based on self-reported symptoms. "
+        "This report is generated by an Artificial Intelligence (AI) model based on self-reported symptoms and patient-entered clinical profiles. "
         "It is intended solely for educational and informational purposes, and does NOT constitute professional medical advice, diagnosis, treatment, or a clinical decision. "
         "Always seek the direct advice of your physician or other qualified health provider with any questions you may have regarding a medical condition. "
         "If you think you may have a medical emergency, call your doctor or emergency services immediately.",
@@ -385,7 +670,16 @@ def get_pdf_report(record_id):
             'symptoms': row['symptoms'],
             'predicted_disease': row['predicted_disease'],
             'confidence': row['confidence'],
-            'precautions': row['precautions']
+            'precautions': row['precautions'],
+            'age': row['age'] if 'age' in row.keys() else None,
+            'sex': row['sex'] if 'sex' in row.keys() else None,
+            'smoker': row['smoker'] if 'smoker' in row.keys() else None,
+            'weight': row['weight'] if 'weight' in row.keys() else None,
+            'height': row['height'] if 'height' in row.keys() else None,
+            'existing_conditions': row['existing_conditions'] if 'existing_conditions' in row.keys() else None,
+            'duration': row['duration'] if 'duration' in row.keys() else None,
+            'severity': row['severity'] if 'severity' in row.keys() else None,
+            'recommendation': row['recommendation'] if 'recommendation' in row.keys() else None
         }
         
         pdf_buffer = generate_medical_report_pdf(record)
@@ -546,4 +840,4 @@ def chatbot_chat():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5099)

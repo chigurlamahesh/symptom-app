@@ -108,6 +108,17 @@ class _HistoryCardState extends State<HistoryCard> {
                       style: GoogleFonts.poppins(
                           fontSize: 11, color: AppTheme.textSecondary),
                     ),
+                    if (p.age != null && p.sex != null) ...[
+                      const SizedBox(width: 12),
+                      Icon(Icons.person_outline_rounded,
+                          size: 13, color: Colors.grey.shade400),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${p.age}y • ${p.sex![0]}',
+                        style: GoogleFonts.poppins(
+                            fontSize: 11, color: AppTheme.textSecondary),
+                      ),
+                    ],
                     const Spacer(),
                     AnimatedRotation(
                       turns: _expanded ? 0.5 : 0,
@@ -140,6 +151,82 @@ class _HistoryCardState extends State<HistoryCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(height: 24),
+        
+        // Dynamic Specialist Recommendation
+        if (p.recommendation != null) ...[
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppTheme.accent.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppTheme.accent.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.medical_services_rounded, color: AppTheme.accent, size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    p.recommendation!,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryLight,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+
+        // Patient Intake Profile
+        if (p.age != null) ...[
+          Text(
+            'Patient Intake Profile',
+            style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textSecondary),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildHistoryProfileItem('Age/Sex', '${p.age}y • ${p.sex}'),
+                    _buildHistoryProfileItem('Smoking', p.smoker == 'Yes' ? 'Smoker' : 'Non-smoker'),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildHistoryProfileItem('Weight/Height', '${p.weight?.toStringAsFixed(0) ?? 'N/A'} kg • ${p.height?.toStringAsFixed(0) ?? 'N/A'} cm'),
+                    _buildHistoryProfileItem('Severity', p.severity ?? 'N/A'),
+                  ],
+                ),
+                if (p.existingConditions.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildHistoryProfileItem('Existing Conditions', p.existingConditions.map((e) => e.toUpperCase()).join(', ')),
+                ],
+              ],
+            ),
+          ),
+        ],
+        
         // Symptoms
         Text(
           'Symptoms',
@@ -254,5 +341,21 @@ class _HistoryCardState extends State<HistoryCard> {
         SnackBar(content: Text('Could not download report: $e')),
       );
     }
+  }
+
+  Widget _buildHistoryProfileItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(fontSize: 10, color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.poppins(fontSize: 11.5, color: AppTheme.textPrimary, fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
   }
 }

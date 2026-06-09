@@ -7,24 +7,25 @@ import '../models/symptom.dart';
 import '../models/reminder.dart';
 
 class ApiService {
-  // Set to your PC's local IP address for Wi-Fi local testing (e.g. '192.168.0.123')
-  static const String _pcLocalIp = '192.168.0.123'; 
+  // Set to your PC's local IP address for Wi-Fi local testing on physical devices (e.g. '192.168.X.X')
+  // Leave empty '' if running on the Android Emulator or Web/Desktop to auto-resolve to localhost/10.0.2.2
+  static const String _pcLocalIp = ''; 
 
   // Dynamically determine the URL based on the platform
   static String get _baseUrl {
-    if (_pcLocalIp.isNotEmpty && _pcLocalIp != '127.0.0.1' && _pcLocalIp != 'YOUR_PC_IP_HERE') {
-      return 'http://$_pcLocalIp:5000';
+    if (_pcLocalIp.isNotEmpty && _pcLocalIp != 'YOUR_PC_IP_HERE') {
+      return 'http://$_pcLocalIp:5099';
     }
     if (kIsWeb) {
-      return 'http://127.0.0.1:5000';
+      return 'http://127.0.0.1:5099';
     } else {
       try {
         if (Platform.isAndroid) {
           // 10.0.2.2 is the special alias to loopback (127.0.0.1) for the Android Emulator.
-          return 'http://10.0.2.2:5000';
+          return 'http://10.0.2.2:5099';
         }
       } catch (_) {}
-      return 'http://127.0.0.1:5000';
+      return 'http://127.0.0.1:5099';
     }
   }
 
@@ -58,13 +59,33 @@ class ApiService {
     }
   }
 
-  Future<Prediction> predict(List<String> symptoms) async {
+  Future<Prediction> predict({
+    required List<String> symptoms,
+    required int age,
+    required String sex,
+    required String smoker,
+    required double weight,
+    required double height,
+    required List<String> existingConditions,
+    required String duration,
+    required String severity,
+  }) async {
     try {
       final response = await _client
           .post(
             Uri.parse('$_baseUrl/api/predict'),
             headers: {'Content-Type': 'application/json'},
-            body: json.encode({'symptoms': symptoms}),
+            body: json.encode({
+              'symptoms': symptoms,
+              'age': age,
+              'sex': sex,
+              'smoker': smoker,
+              'weight': weight,
+              'height': height,
+              'existing_conditions': existingConditions,
+              'duration': duration,
+              'severity': severity,
+            }),
           )
           .timeout(const Duration(seconds: 15));
 
@@ -78,7 +99,7 @@ class ApiService {
     } catch (e) {
       if (e is ApiException) rethrow;
       if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5099.');
       }
       throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
     }

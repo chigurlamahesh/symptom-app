@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/hospital.dart';
 import '../services/hospital_service.dart';
 import '../utils/app_theme.dart';
+import '../widgets/animated_button.dart';
 
 class HospitalScreen extends StatefulWidget {
   const HospitalScreen({super.key});
@@ -260,14 +261,16 @@ class _HospitalScreenState extends State<HospitalScreen> {
                 style: GoogleFonts.poppins(color: AppTheme.textSecondary),
               ),
               const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _detectAndFetch,
-                icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-                label: const Text('Try Auto Detect', style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              AnimatedButton(
+                child: ElevatedButton.icon(
+                  onPressed: _detectAndFetch,
+                  icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                  label: const Text('Try Auto Detect', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                 ),
               ),
             ],
@@ -489,27 +492,31 @@ class _HospitalCard extends StatelessWidget {
             Row(
               children: [
                 // Directions button
-                ElevatedButton.icon(
-                  onPressed: onDirections,
-                  icon: const Icon(Icons.navigation_rounded, size: 16, color: Colors.white),
-                  label: const Text('Directions', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                AnimatedButton(
+                  child: ElevatedButton.icon(
+                    onPressed: onDirections,
+                    icon: const Icon(Icons.navigation_rounded, size: 16, color: Colors.white),
+                    label: const Text('Directions', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 
                 // Call button
                 if (onCall != null) ...[
-                  IconButton(
-                    onPressed: onCall,
-                    icon: const Icon(Icons.phone_rounded, color: Colors.green),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.green.withOpacity(0.08),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  AnimatedButton(
+                    child: IconButton(
+                      onPressed: onCall,
+                      icon: const Icon(Icons.phone_rounded, color: Colors.green),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.green.withOpacity(0.08),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -517,12 +524,14 @@ class _HospitalCard extends StatelessWidget {
 
                 // Website button
                 if (onWebsite != null) ...[
-                  IconButton(
-                    onPressed: onWebsite,
-                    icon: const Icon(Icons.language_rounded, color: Colors.blue),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.blue.withOpacity(0.08),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  AnimatedButton(
+                    child: IconButton(
+                      onPressed: onWebsite,
+                      icon: const Icon(Icons.language_rounded, color: Colors.blue),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.blue.withOpacity(0.08),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                   ),
                 ],

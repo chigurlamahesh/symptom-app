@@ -11,13 +11,18 @@ os.makedirs('data', exist_ok=True)
 
 # Define disease to symptoms mapping
 disease_symptoms = {
-    'Common Cold': ['sneezing', 'runny_nose', 'sore_throat', 'cough', 'mild_fever'],
-    'Influenza': ['high_fever', 'muscle_pain', 'headache', 'fatigue', 'chills', 'dry_cough'],
-    'COVID-19': ['dry_cough', 'fever', 'loss_of_taste', 'loss_of_smell', 'fatigue', 'difficulty_breathing'],
-    'Malaria': ['high_fever', 'chills', 'sweating', 'headache', 'nausea', 'muscle_pain'],
-    'Dengue': ['high_fever', 'severe_headache', 'joint_pain', 'rash', 'nausea'],
-    'Typhoid': ['prolonged_fever', 'abdominal_pain', 'headache', 'weakness', 'rash'],
-    'Allergy': ['sneezing', 'watery_eyes', 'runny_nose', 'itchy_skin']
+    'Common Cold': ['sneezing', 'runny_nose', 'sore_throat', 'cough', 'fever'],
+    'Influenza': ['fever', 'muscle_pain', 'headache', 'fatigue', 'chills', 'cough'],
+    'COVID-19': ['cough', 'fever', 'loss_of_taste', 'loss_of_smell', 'fatigue', 'difficulty_breathing'],
+    'Malaria': ['fever', 'chills', 'sweating', 'headache', 'nausea', 'muscle_pain'],
+    'Dengue': ['fever', 'severe_headache', 'joint_pain', 'rash', 'nausea'],
+    'Typhoid': ['fever', 'abdominal_pain', 'headache', 'weakness', 'rash'],
+    'Allergy': ['sneezing', 'watery_eyes', 'runny_nose', 'itchy_skin'],
+    'Bronchitis': ['cough', 'difficulty_breathing', 'fever', 'fatigue', 'chest_pain'],
+    'Pneumonia': ['fever', 'cough', 'difficulty_breathing', 'chest_pain', 'chills', 'fatigue'],
+    'Heart Attack / Angina': ['chest_pain', 'difficulty_breathing', 'weakness', 'nausea', 'headache'],
+    'GERD': ['chest_pain', 'nausea'],
+    'Asthma Exacerbation': ['difficulty_breathing', 'cough']
 }
 
 # Define precautions
@@ -28,7 +33,12 @@ disease_precautions = {
     'Malaria': ['Consult a doctor immediately for antimalarial drugs', 'Avoid mosquito bites', 'Use mosquito nets'],
     'Dengue': ['Drink fluids', 'Rest', 'Take paracetamol (avoid aspirin/ibuprofen)', 'Monitor platelet count'],
     'Typhoid': ['Take prescribed antibiotics', 'Eat clean and fully cooked food', 'Drink purified water'],
-    'Allergy': ['Identify and avoid allergens', 'Take antihistamines', 'Consult an allergist']
+    'Allergy': ['Identify and avoid allergens', 'Take antihistamines', 'Consult an allergist'],
+    'Bronchitis': ['Inhale steam or use humidifier', 'Avoid smoking and secondhand smoke', 'Stay hydrated', 'Rest and get plenty of sleep'],
+    'Pneumonia': ['Get prescription antibiotics or antivirals', 'Get plenty of rest', 'Stay hydrated with warm liquids', 'Avoid cold environments'],
+    'Heart Attack / Angina': ['**CALL EMERGENCY SERVICES (911) IMMEDIATELY**', 'Sit down and remain calm', 'Take aspirin if advised by emergency services', 'Chew nitroglycerin if previously prescribed'],
+    'GERD': ['Avoid spicy, greasy, or acidic foods', 'Do not lie down within 2-3 hours of eating', 'Eat smaller, more frequent meals', 'Consider antacids under advice'],
+    'Asthma Exacerbation': ['Use your quick-relief rescue inhaler (albuterol)', 'Sit upright and loosen tight clothing', 'Stay calm and breathe slowly', 'Seek emergency care if symptoms do not improve']
 }
 
 # Extract all unique symptoms
