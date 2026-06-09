@@ -228,31 +228,26 @@ class _SymptomScreenState extends State<SymptomScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Shimmer.fromColors(
-                          baseColor: Colors.white,
-                          highlightColor: Colors.blue.shade100,
-                          period: const Duration(seconds: 3),
-                          child: GestureDetector(
-                            onTap: () => _openVoiceInput(context),
-                            child: Container(
-                              height: 48,
-                              width: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  )
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.mic_rounded,
-                                color: AppTheme.primary,
-                                size: 22,
-                              ),
+                        GestureDetector(
+                          onTap: () => _openVoiceInput(context),
+                          child: Container(
+                            height: 48,
+                            width: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                )
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.mic_rounded,
+                              color: AppTheme.danger,
+                              size: 22,
                             ),
                           ),
                         ),

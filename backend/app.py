@@ -244,6 +244,28 @@ def predict():
             if smoker == 'Yes':
                 multiplier *= 1.4
                 
+        # 13. Migraine scaling
+        elif disease == 'Migraine':
+            if sex == 'Female':
+                multiplier *= 1.4
+                
+        # 14. Gastroenteritis scaling
+        elif disease == 'Gastroenteritis':
+            if age < 10:
+                multiplier *= 1.3
+                
+        # 15. Tuberculosis scaling
+        elif disease == 'Tuberculosis':
+            if smoker == 'Yes':
+                multiplier *= 1.5
+            if age >= 60:
+                multiplier *= 1.3
+                
+        # 16. UTI scaling
+        elif disease == 'Urinary Tract Infection (UTI)':
+            if sex == 'Female':
+                multiplier *= 2.0
+                
         prob_dict[disease] *= multiplier
         
     # Re-normalize modified probabilities so they sum to 1.0
@@ -286,7 +308,11 @@ def predict():
         'Malaria': 'Consult an Infectious Disease Specialist.',
         'Dengue': 'Consult an Infectious Disease Specialist.',
         'Typhoid': 'Consult an Infectious Disease Specialist or General Physician.',
-        'COVID-19': 'Consult a General Physician (Isolate and monitor oxygen levels).'
+        'COVID-19': 'Consult a General Physician (Isolate and monitor oxygen levels).',
+        'Migraine': 'Consult a Neurologist.',
+        'Gastroenteritis': 'Consult a Gastroenterologist or General Physician.',
+        'Tuberculosis': 'Consult a Pulmonologist or Infectious Disease Specialist.',
+        'Urinary Tract Infection (UTI)': 'Consult a Urologist or General Physician.'
     }
     recommendation = recommendation_map.get(predicted_disease, 'Consult a General Physician.')
     

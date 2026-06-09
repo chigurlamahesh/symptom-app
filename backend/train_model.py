@@ -22,7 +22,11 @@ disease_symptoms = {
     'Pneumonia': ['fever', 'cough', 'difficulty_breathing', 'chest_pain', 'chills', 'fatigue'],
     'Heart Attack / Angina': ['chest_pain', 'difficulty_breathing', 'weakness', 'nausea', 'headache'],
     'GERD': ['chest_pain', 'nausea'],
-    'Asthma Exacerbation': ['difficulty_breathing', 'cough']
+    'Asthma Exacerbation': ['difficulty_breathing', 'cough'],
+    'Migraine': ['severe_headache', 'nausea', 'sensitivity_to_light', 'dizziness'],
+    'Gastroenteritis': ['nausea', 'vomiting', 'diarrhea', 'abdominal_pain', 'fever'],
+    'Tuberculosis': ['chronic_cough', 'fever', 'fatigue', 'night_sweats', 'weight_loss', 'chest_pain'],
+    'Urinary Tract Infection (UTI)': ['burning_urination', 'frequent_urination', 'abdominal_pain', 'fever']
 }
 
 # Define precautions
@@ -38,7 +42,11 @@ disease_precautions = {
     'Pneumonia': ['Get prescription antibiotics or antivirals', 'Get plenty of rest', 'Stay hydrated with warm liquids', 'Avoid cold environments'],
     'Heart Attack / Angina': ['**CALL EMERGENCY SERVICES (911) IMMEDIATELY**', 'Sit down and remain calm', 'Take aspirin if advised by emergency services', 'Chew nitroglycerin if previously prescribed'],
     'GERD': ['Avoid spicy, greasy, or acidic foods', 'Do not lie down within 2-3 hours of eating', 'Eat smaller, more frequent meals', 'Consider antacids under advice'],
-    'Asthma Exacerbation': ['Use your quick-relief rescue inhaler (albuterol)', 'Sit upright and loosen tight clothing', 'Stay calm and breathe slowly', 'Seek emergency care if symptoms do not improve']
+    'Asthma Exacerbation': ['Use your quick-relief rescue inhaler (albuterol)', 'Sit upright and loosen tight clothing', 'Stay calm and breathe slowly', 'Seek emergency care if symptoms do not improve'],
+    'Migraine': ['Rest in a quiet, dark room', 'Apply a cold compress to your forehead', 'Avoid bright lights and loud sounds', 'Take prescribed migraine relievers'],
+    'Gastroenteritis': ['Drink plenty of oral rehydration fluids', 'Eat bland foods (BRAT diet)', 'Avoid dairy and fatty foods', 'Wash hands frequently'],
+    'Tuberculosis': ['Get a chest X-ray and sputum test', 'Wear a mask to prevent transmission', 'Take prescribed combination antibiotics consistently', 'Ensure good room ventilation'],
+    'Urinary Tract Infection (UTI)': ['Drink plenty of water to flush bacteria', 'Avoid caffeine and alcohol', 'Take prescribed antibiotics fully', 'Maintain good personal hygiene']
 }
 
 # Extract all unique symptoms

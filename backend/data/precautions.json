@@ -66,5 +66,29 @@
         "Sit upright and loosen tight clothing",
         "Stay calm and breathe slowly",
         "Seek emergency care if symptoms do not improve"
+    ],
+    "Migraine": [
+        "Rest in a quiet, dark room",
+        "Apply a cold compress to your forehead",
+        "Avoid bright lights and loud sounds",
+        "Take prescribed migraine relievers"
+    ],
+    "Gastroenteritis": [
+        "Drink plenty of oral rehydration fluids",
+        "Eat bland foods (BRAT diet)",
+        "Avoid dairy and fatty foods",
+        "Wash hands frequently"
+    ],
+    "Tuberculosis": [
+        "Get a chest X-ray and sputum test",
+        "Wear a mask to prevent transmission",
+        "Take prescribed combination antibiotics consistently",
+        "Ensure good room ventilation"
+    ],
+    "Urinary Tract Infection (UTI)": [
+        "Drink plenty of water to flush bacteria",
+        "Avoid caffeine and alcohol",
+        "Take prescribed antibiotics fully",
+        "Maintain good personal hygiene"
     ]
 }

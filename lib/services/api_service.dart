@@ -9,25 +9,10 @@ import '../models/reminder.dart';
 class ApiService {
   // Set to your PC's local IP address for Wi-Fi local testing on physical devices (e.g. '192.168.X.X')
   // Leave empty '' if running on the Android Emulator or Web/Desktop to auto-resolve to localhost/10.0.2.2
-  static const String _pcLocalIp = ''; 
+  static const String _pcLocalIp = '192.168.0.122';
 
   // Dynamically determine the URL based on the platform
-  static String get _baseUrl {
-    if (_pcLocalIp.isNotEmpty && _pcLocalIp != 'YOUR_PC_IP_HERE') {
-      return 'http://$_pcLocalIp:5099';
-    }
-    if (kIsWeb) {
-      return 'http://127.0.0.1:5099';
-    } else {
-      try {
-        if (Platform.isAndroid) {
-          // 10.0.2.2 is the special alias to loopback (127.0.0.1) for the Android Emulator.
-          return 'http://10.0.2.2:5099';
-        }
-      } catch (_) {}
-      return 'http://127.0.0.1:5099';
-    }
-  }
+  static String get _baseUrl => 'https://symptom-app-1.onrender.com';
 
   static String getReportUrl(int id) {
     return '$_baseUrl/api/history/$id/pdf';
@@ -52,10 +37,13 @@ class ApiService {
       throw ApiException('Failed to load symptoms (${response.statusCode})');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -98,10 +86,13 @@ class ApiService {
       throw ApiException(error['error'] as String? ?? 'Prediction failed');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5099.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5099.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -120,10 +111,13 @@ class ApiService {
       throw ApiException('Failed to load history (${response.statusCode})');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -138,10 +132,13 @@ class ApiService {
       }
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -160,10 +157,13 @@ class ApiService {
       throw ApiException('Failed to load reminders (${response.statusCode})');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -186,10 +186,13 @@ class ApiService {
       throw ApiException(error['error'] as String? ?? 'Failed to add reminder');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -204,10 +207,13 @@ class ApiService {
       }
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 
@@ -227,13 +233,17 @@ class ApiService {
         return data['reply']?.toString() ?? 'No response received.';
       }
       final error = json.decode(response.body) as Map<String, dynamic>;
-      throw ApiException(error['error'] as String? ?? 'Failed to send chat message');
+      throw ApiException(
+          error['error'] as String? ?? 'Failed to send chat message');
     } catch (e) {
       if (e is ApiException) rethrow;
-      if (e.toString().contains('TimeoutException') || e.toString().contains('timeout')) {
-        throw ApiException('Connection timed out. Make sure the Flask backend is running on port 5000.');
+      if (e.toString().contains('TimeoutException') ||
+          e.toString().contains('timeout')) {
+        throw ApiException(
+            'Connection timed out. Make sure the Flask backend is running on port 5000.');
       }
-      throw ApiException('Cannot connect to server. Make sure the Flask backend is running.');
+      throw ApiException(
+          'Cannot connect to server. Make sure the Flask backend is running.');
     }
   }
 }
