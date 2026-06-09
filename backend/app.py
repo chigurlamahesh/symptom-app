@@ -519,7 +519,7 @@ def generate_medical_report_pdf(record):
     meta_data = [
         [Paragraph("<b>Report ID:</b> AHC-{:06d}".format(record_id), body_style), 
          Paragraph("<b>Date Generated:</b> {}".format(date_str), body_style)],
-        [Paragraph("<b>Assessed By:</b> AI Health Checker Engine", body_style), 
+        [Paragraph("<b>Assessed By:</b> Health Checker Engine", body_style), 
          Paragraph("<b>Status:</b> Completed", body_style)]
     ]
     meta_table = Table(meta_data, colWidths=[doc.width/2.0, doc.width/2.0])
